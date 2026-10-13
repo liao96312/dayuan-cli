@@ -24,6 +24,12 @@ dayuan wake                          # 窗口关着也能叫出来
 > 目录名建议用 ASCII 路径是故意的：中文路径在命令行参数传递和 cmd/PS 的代码页上
 > 已经坑过两次（`launch_app` 报"文件名、目录名或卷标语法不正确"、`.bat` 里的中文注释被执行）。
 
+## 界面预览
+
+| 待命状态 | 发送前确认（自动点「确认」） |
+|---|---|
+| <img src="samples/ref_idle.png" width="320" alt="大圆待命界面"> | <img src="samples/ref_consent_redacted.png" width="320" alt="大圆发送确认弹窗"> |
+
 ## 核心能力
 
 - `ask`：发一句话给大圆，等它跑完，把回复读回终端
