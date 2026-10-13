@@ -1,0 +1,24 @@
+# 运行痕迹：含真实联系人姓名、聊天内容、机器路径，绝不公开
+state/
+*.log
+
+# 我本地留的原始副本（含真实姓名），仅本地保留
+.private-backup/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# 临时
+*.tmp
+*.bak
