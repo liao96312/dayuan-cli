@@ -1,4 +1,9 @@
-# 大圆 CLI（dayuan-cli）
+# DaYuan CLI
+
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-Desktop%20Automation-0078D4?logo=windows&logoColor=white)
+![WeCom](https://img.shields.io/badge/WeCom-智能助理-07C160?logo=wechat&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
 
 把企业微信里的「智能助理」（大圆）**当成一个命令行工具来用**。
 
@@ -18,6 +23,40 @@ dayuan wake                          # 窗口关着也能叫出来
 
 > 目录名建议用 ASCII 路径是故意的：中文路径在命令行参数传递和 cmd/PS 的代码页上
 > 已经坑过两次（`launch_app` 报"文件名、目录名或卷标语法不正确"、`.bat` 里的中文注释被执行）。
+
+## 核心能力
+
+- `ask`：发一句话给大圆，等它跑完，把回复读回终端
+- `auto-reply`：常驻，定时查未读并自动回复，支持白名单 / 黑名单与只审不发
+- `wake`：窗口关着也能把大圆叫出来
+- `approve` / `watch`：自动识别并点击确认卡，点击后验证
+- `doctor` / `check`：权限、窗口、抓图、地标体检与离线自检
+
+## 快速开始
+
+```powershell
+git clone https://github.com/liao96312/dayuan-cli
+cd dayuan-cli
+pip install pillow          # 可选，仅自检读 PNG 时需要
+python dayuan_watch.py doctor
+python dayuan_watch.py ask "帮我看看有哪些未读消息"
+```
+
+运行环境：Windows + 已登录的企业微信桌面端，Python 3.10+，以普通权限运行（见下文）。
+
+## 目录结构
+
+```text
+dayuan_watch.py        主程序（纯标准库）
+dayuan.cmd             命令包装：dayuan <子命令>
+start-*.cmd            双击启动 auto-reply / watch
+auto-reply.txt         auto-reply 提示词（可改）
+drive.txt              watch 默认注入的提示词
+ocr_image.ps1          调用 Windows OCR 读图
+samples/               打过码的自检截图
+dev/                   测量与实验脚本
+state/                 运行日志与截图（已 gitignore，不入库）
+```
 
 ## 自检样本
 
@@ -263,3 +302,11 @@ RST 而不是 401，说明这些端口**在 TCP 层就校验来者**（只服务
 - 双击 Ctrl 是企微的全局热键，理论上可能被别的软件抢占；`wake` 失败时会明确报错而不是静默。
 - 唤醒会**把大圆窗口弹到你面前**（这是它的设计用途）。无人值守时如果不想被打扰，
   就别让它最小化/关闭，`watch` 只在窗口消失时才会去唤醒。
+
+## 当前状态
+
+可日常使用的个人自动化工具，依赖企业微信客户端界面，客户端改版后地标可能需要重新测量。非官方用法，风险自负。
+
+## 许可
+
+[MIT](LICENSE)
