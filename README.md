@@ -8,8 +8,8 @@
 把企业微信里的「智能助理」（大圆）**当成一个命令行工具来用**。
 
 大圆是纯云端的：推理、沙箱、提示词、工具全在腾讯云上，本机只有企微客户端在做加密转发。
-本机**不存在任何"大圆 API"**（实测见文末），唯一能操作它的入口就是那个「智能助理」窗口。
-所以这里做的事是：**把窗口自动化包装成 CLI** —— 能发、能等、能读、能自动点确认。
+窗口这条路把「智能助理」包装成 CLI：能发、能等、能读、能自动点确认。
+另外还有一条不碰窗口的 MCP 通道，见文末「新通道」。
 
 ```powershell
 dayuan ask "帮我看看有哪些未读消息"   # 发一句、等它跑完、把回复打出来
@@ -37,6 +37,7 @@ dayuan wake                          # 窗口关着也能叫出来
 - `wake`：窗口关着也能把大圆叫出来
 - `approve` / `watch`：自动识别并点击确认卡，点击后验证
 - `doctor` / `check`：权限、窗口、抓图、地标体检与离线自检
+- `dayuan_mcp.py`：不碰窗口，用机器人身份发消息（apikey 不进仓库）
 
 ## 快速开始
 
@@ -292,6 +293,26 @@ dayuan auto-reply            # 每 5 分钟一轮，跑到 Ctrl+C
 
 RST 而不是 401，说明这些端口**在 TCP 层就校验来者**（只服务主进程自己拉起的引擎），不是鉴权值的问题，猜 key 打不通。
 
+## 新通道：大圆 MCP（非 UI 已跑通，2026-10-15）
+
+上面那些本地端口都打不通，但大圆展示的 Agent Card 给出了**公开对外通道**：
+`https://qyapi.weixin.qq.com/mcp/v2/bot/msg`（MCP streamable-http）。
+apikey 放在 `state\mcp_apikey.txt` 或环境变量 `DAYUAN_MCP_APIKEY`，不进仓库，
+可用 `dev\apikey_dump.py` 从企微进程内存提取。Card 上那个
+`<内部域名>` 的 A2A 端点是腾讯 WorkBuddy 集群**内网专用**，外部（含企微
+客户端自己）都不可达，详见 `NONUI-PROGRESS.md` 第九节。
+
+```powershell
+python dayuan_mcp.py tools                     # 服务器工具清单
+python dayuan_mcp.py sessions                  # 机器人最近会话（拿 chat_id）
+python dayuan_mcp.py send <chat_id> "你好"      # 以授权用户身份发文本（需确认）
+python dayuan_mcp.py send-aibot <chat_id> --markdown "…"
+```
+
+纯标准库、无第三方依赖。协议、读链路、写链路均已实测（`message_aibot_send`
+以机器人身份发送可用；`message_send`/`chat_*` 在当前企业返回 853006 灰度未开放）。
+发送命令默认要人工确认。
+
 ## 与旧脚本的关系
 
 `driver.py` 是上一版：只做定时注入，靠相对坐标 + 发送键像素判断忙闲，**不点确认**，遇到确认卡必然空转。
@@ -316,3 +337,4 @@ RST 而不是 401，说明这些端口**在 TCP 层就校验来者**（只服务
 ## 许可
 
 [MIT](LICENSE)
+
